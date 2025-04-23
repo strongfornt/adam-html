@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+  canvas {
+    border: 1px solid #ccc;
+    background-color: #e3eaf0;
+  }
+
+  input, button {
+    margin-top: 10px;
+    padding: 5px 10px;
+  }
+</style>
+
+</head>
+
+<body>
+    <div style="margin-bottom: 10px;">
+        <canvas id="captcha" width="200" height="60"></canvas>
+        <button onclick="generateCaptcha()">Refresh</button>
+      </div>
+      
+      <input type="text" id="captchaInput" placeholder="Enter CAPTCHA">
+      <button onclick="validateCaptcha()">Submit</button>
+      
+      <p id="result"></p>
+
+
+      <script>
+        let currentCaptcha = "";
+      
+        function generateCaptcha() {
+          const canvas = document.getElementById("captcha");
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+          const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+          currentCaptcha = "";
+          for (let i = 0; i < 6; i++) {
+            currentCaptcha += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+      
+          // Background color
+          ctx.fillStyle = "#d3dbe2";
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+          // Add distortion lines
+          for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(Math.random() * 200, Math.random() * 60);
+            ctx.lineTo(Math.random() * 200, Math.random() * 60);
+            ctx.strokeStyle = "rgba(0,0,0,0.1)";
+            ctx.stroke();
+          }
+      
+          // Draw text with random rotation
+          for (let i = 0; i < currentCaptcha.length; i++) {
+            const x = 30 + i * 25;
+            const y = 40;
+            const angle = (Math.random() - 0.5) * 0.5;
+      
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.font = "bold 28px monospace";
+            ctx.fillStyle = "#333";
+            ctx.fillText(currentCaptcha[i], 0, 0);
+            ctx.restore();
+          }
+        }
+
+        console.log(currentCaptcha);
+        
+      
+        function validateCaptcha() {
+          const userInput = document.getElementById("captchaInput").value;
+          const result = document.getElementById("result");
+      
+          if (userInput === currentCaptcha) {
+            console.log(currentCaptcha, 'if');
+            
+            result.innerText = "✅ CAPTCHA matched!";
+            result.style.color = "green";
+          } else {
+            console.log(currentCaptcha ,'else');
+            
+            result.innerText = "❌ CAPTCHA does not match!";
+            result.style.color = "red";
+          }
+        }
+      
+        // Initial generate
+        window.onload = generateCaptcha;
+      </script>
+      
+      
+</body>
+</html>
